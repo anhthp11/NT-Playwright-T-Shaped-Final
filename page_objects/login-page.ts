@@ -1,6 +1,11 @@
 import { Page,Locator } from '@playwright/test';
 import { baseUrl } from '../env/url';
 
+export interface UserData {
+    username: string;
+    password: string;
+    name: string;
+};
 
 export class LoginPage {
     readonly page: Page;
@@ -10,9 +15,9 @@ export class LoginPage {
 
     constructor(page:Page) {
         this.page = page;
-        this.usernameInput = page.getByPlaceholder('UserName');
-        this.passwordInput = page.getByPlaceholder('Password');
-        this.loginButton = page.getByRole('button', { name: 'Login' });
+        this.usernameInput = page.getByTestId('login-username');
+        this.passwordInput = page.getByTestId('login-password');
+        this.loginButton = page.getByTestId('login-submit');
     }
 
     async goto() {

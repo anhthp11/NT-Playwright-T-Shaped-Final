@@ -1,20 +1,26 @@
 import { test as base, expect } from '@playwright/test';
-import { BookStorePage } from '../../page_objects/book-store-page';
-import { StudentPage } from '../../page_objects/student-page';
+import { HomePage } from '@page_objects/home-page';
+import { CartPage } from '@page_objects/cart-page';
+import { LoginPage } from '@page_objects/login-page';
 
 type AppFixture = {
-    bookStorePage: BookStorePage;
-    studentPage: StudentPage;
+    loginPage: LoginPage;
+    homePage: HomePage;
+    cartPage: CartPage;
 };
 
 export const test = base.extend<AppFixture>({
-    bookStorePage: async ({ page }, use) => {
-        const bookStorePage = new BookStorePage(page);
-        await use(bookStorePage);
+    homePage: async ({ page }, use) => {
+        const homePage = new HomePage(page);
+        await use(homePage);
     },
-    studentPage: async ({ page }, use) => {
-        const studentPage = new StudentPage(page);
-        await use(studentPage);
+    cartPage: async ({ page }, use) => {
+        const cartPage = new CartPage(page);
+        await use(cartPage);
+    },
+    loginPage: async ({ page }, use) => {
+        const loginPage = new LoginPage(page);
+        await use(loginPage);
     },
 });
 

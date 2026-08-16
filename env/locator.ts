@@ -1,14 +1,15 @@
-//Student form
-export const gender: string = '//input[@type="radio" and @name="gender"]';
-export const hobbies: string = '//input[@type="checkbox" and @name="hobbies"]';
+//Home page
+export const productName = '//*[@class="product-name"]';
+export const productPrice = '//*[@class="product-price"]';
 
-export const studentName: string = '//td[text()="Student Name"]/following-sibling::td';
-export const studentEmail: string = '//td[text()="Student Email"]/following-sibling::td';
-export const studentGender: string = '//td[text()="Gender"]/following-sibling::td';
-export const studentMobile: string = '//td[text()="Mobile"]/following-sibling::td';
-export const studentDateOfBirth: string = '//td[text()="Date of Birth"]/following-sibling::td';
-export const studentSubjects: string = '//td[text()="Subjects"]/following-sibling::td';
-export const studentHobbies: string = '//td[text()="Hobbies"]/following-sibling::td';
-export const studentPicture: string = '//td[text()="Picture"]/following-sibling::td';
-export const studentAddress: string = '//td[text()="Address"]/following-sibling::td';
-export const studentStateAndCity: string = '//td[text()="State and City"]/following-sibling::td';
+//Cart page
+export const checkoutButton = '//button[@class="checkout-btn"]';
+export const cartItem = 'xpath=.//div[@class="cart-item"]';
+export const cartItemInfo = 'xpath=.//div[@class="item-info"]';
+export const cartItemName = 'xpath=.//*[@class="item-name"]';
+export const cartItemCategory = 'xpath=.//*[@class="item-category"]';
+export const cartItemPrice = 'xpath=.//*[@class="item-unit-price"]';
+export const cartItemQuantity = 'xpath=.//div[@class="item-qty"]/span';
+export const cartItemTotalPrice = 'xpath=.//div[@class="item-total"]';
+export const cartItemRemoveButton = 'xpath=.//button[@class="remove-btn"]';
+export const cartEmpty = 'xpath=.//div[@class="cart-empty"]';
