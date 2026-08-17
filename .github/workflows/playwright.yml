@@ -52,7 +52,9 @@ jobs:
           else
             npx playwright test --grep "${{ github.event.inputs.test_tag }}" --workers=${{ github.event.inputs.workers }}
           fi
-
+      - name: Install Allure
+        run: npm install -g allure-commandline
+        
       - name: Generate Allure HTML report
         if: always()
         run: npm run report:allure:html
