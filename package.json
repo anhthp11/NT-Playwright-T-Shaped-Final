@@ -8,7 +8,7 @@
   "license": "ISC",
   "type": "commonjs",
   "scripts": {
-    "report:allure:html": "npx allure generate ./reports/allure-results -o ./reports/allure-html-report",
+    "report:allure:html": "npx allure generate ./reports/allure-results -o ./reports/allure-html-report --clean",
     "report:html": "npx playwright show-report"
   },
   "devDependencies": {
