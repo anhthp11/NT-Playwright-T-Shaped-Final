@@ -3,7 +3,6 @@ import { shortWaitingTime } from '../env/base';
 import { receivers, users } from '../test_data/user-data';
 import { ProductData } from '@page_objects/home-page';
 import { products } from '../test_data/product-data';
-import { CartItemData } from '@page_objects/cart-page';
 import { ConfirmedBooking, ReceiverInfo } from '@page_objects/checkout-page';
 import { paymentMethods } from '../test_data/payment-data';
 
