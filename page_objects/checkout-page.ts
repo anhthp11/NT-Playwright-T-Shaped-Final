@@ -1,9 +1,7 @@
 import { Page,Locator } from '@playwright/test';
-import { baseUrl } from '../env/url';
 import * as locator from '../env/locator';
-import { ProductData } from './home-page';
 import { shortWaitingTime } from '../env/base';
-import { UserData } from './login-page';
+import * as allure from 'allure-js-commons';
 
 export interface ReceiverInfo {
     fullname: string,
@@ -43,24 +41,27 @@ export class CheckoutPage {
         this.confirmedTotal = page.locator(locator.confirmedTotal);
     }
 
-    async clickCheckoutSubmitButton() {
+    async checkoutSubmit() {
         await this.checkoutSubmitButton.click();
+        await this.page.waitForTimeout(shortWaitingTime);
     }
 
     async fillReceiverInfo(receiver:ReceiverInfo) {
-        await this.checkoutName.fill(receiver.fullname);
-        if (receiver.phone) {
-            await this.checkoutPhone.fill(receiver.phone);
-        }
-        await this.checkoutAddress.fill(receiver.address);
+        await allure.step("Fill in the receiver's full name", async () => {
+            await this.checkoutName.fill(receiver.fullname);
+        });
+        await allure.step("Fill in the receiver's phone number", async () => {
+            if (receiver.phone) {
+                await this.checkoutPhone.fill(receiver.phone);
+            }
+        });
+        await allure.step("Fill in the receiver's address", async () => {
+            await this.checkoutAddress.fill(receiver.address);
+        });        
     }
 
     async selectPaymentMethod(paymentMethod:string) {
         await this.page.locator(`//*[contains(text(),'${paymentMethod}')]`).click();
-    }
-    
-    async checkoutSubmit() {
-        await this.checkoutSubmitButton.click();
     }
 
     async getConfirmedBookingInformation() : Promise<ConfirmedBooking> {

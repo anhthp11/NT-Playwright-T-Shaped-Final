@@ -1,6 +1,7 @@
 import { Page,Locator } from '@playwright/test';
 import { baseUrl } from '../env/url';
 import { shortWaitingTime } from '../env/base';
+import * as allure from 'allure-js-commons';
 
 export interface UserData {
     username: string;
@@ -23,13 +24,21 @@ export class LoginPage {
     }
 
     async goto() {
-        await this.page.goto(baseUrl + '/login');
+            await this.page.goto(baseUrl + '/login');
     }
 
     async login(user: UserData) {
-        await this.usernameInput.fill(user.username);
-        await this.passwordInput.fill(user.password);
-        await this.loginButton.click();
-        await this.page.waitForTimeout(shortWaitingTime);
+        await allure.step('Enter username', async () => {
+            await this.usernameInput.fill(user.username);
+        });
+
+        await allure.step('Enter password', async () => {
+            await this.passwordInput.fill(user.password);
+        });
+
+        await allure.step('Click Login button', async () => {
+            await this.loginButton.click();
+        });
+            await this.page.waitForTimeout(shortWaitingTime);
     }
 }

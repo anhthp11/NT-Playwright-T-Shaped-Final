@@ -3,6 +3,7 @@ import { baseUrl } from '../env/url';
 import * as locator from '../env/locator';
 import { ProductData } from './home-page';
 import { shortWaitingTime } from '../env/base';
+import * as allure from 'allure-js-commons';
 
 export interface CartItemData extends ProductData {
     //category: string;
@@ -57,7 +58,7 @@ export class CartPage {
     async deleteAllCartItems() {
         const cartItems = this.page.locator(locator.cartItem);
 
-        while (await cartItems.count() > 0) {
+        while (await cartItems.count() > 0) {       
             await cartItems
                 .first()
                 .locator(locator.cartItemRemoveButton)
