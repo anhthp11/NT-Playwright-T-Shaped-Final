@@ -1,5 +1,6 @@
 import { Page,Locator } from '@playwright/test';
 import { baseUrl } from '../env/url';
+import { shortWaitingTime } from '../env/base';
 
 export interface UserData {
     username: string;
@@ -24,9 +25,10 @@ export class LoginPage {
         await this.page.goto(baseUrl + '/login');
     }
 
-    async login(username: string, password: string) {
-        await this.usernameInput.fill(username);
-        await this.passwordInput.fill(password);
+    async login(user: UserData) {
+        await this.usernameInput.fill(user.username);
+        await this.passwordInput.fill(user.password);
         await this.loginButton.click();
+        await this.page.waitForTimeout(shortWaitingTime);
     }
 }

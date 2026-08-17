@@ -13,10 +13,12 @@ export interface CartItemData extends ProductData {
 export class CartPage {
     readonly page: Page;
     readonly checkoutButton: Locator;
+    readonly cartTotal: Locator;
 
     constructor(page:Page) {
         this.page = page;
         this.checkoutButton = page.locator(locator.checkoutButton);
+        this.cartTotal = page.locator(locator.cartTotal);
     }
 
     async goto() {
@@ -25,6 +27,7 @@ export class CartPage {
 
     async clickCheckoutButton() {
         await this.checkoutButton.click();
+        await this.page.waitForTimeout(shortWaitingTime);
     }
 
     async getCartItems(): Promise<CartItemData[]> {
@@ -45,6 +48,10 @@ export class CartPage {
         }
 
         return items;
+    }
+
+    async getCartTotal(): Promise<string> {
+        return this.cartTotal.innerText();
     }
 
     async deleteAllCartItems() {
