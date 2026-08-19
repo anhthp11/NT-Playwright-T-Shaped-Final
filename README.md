@@ -2,7 +2,7 @@ This is a project to practice Automation testing using Playwright and Typescript
 
 Thanks for reviewing!
 
-Project details:
+Project Details
 - Programming language: Typescript
 - Framework: Playwright
 - Instructors: Mr. Tue, Mr. Duy, Mr. Tien, Mrs. Anh from NT
