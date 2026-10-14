@@ -1,10 +1,10 @@
 import { test, expect } from '../core/fixtures/page-fixture';
-import { shortWaitingTime } from '../env/base';
 import { receivers, users } from '../test_data/user-data';
 import { ProductData } from '@page_objects/home-page';
 import { products } from '../test_data/product-data';
 import { ConfirmedBooking, ReceiverInfo } from '@page_objects/checkout-page';
 import { paymentMethods } from '../test_data/payment-data';
+import { navigateToPage } from '../page_objects/base-page';
 import * as allure from 'allure-js-commons';
 
 test.beforeEach( async({loginPage, homePage, cartPage}) => {
@@ -13,7 +13,7 @@ test.beforeEach( async({loginPage, homePage, cartPage}) => {
 
     // Go to the login page and perform login with valid credentials
     await allure.step('Go to Login Page', async () => {
-        await loginPage.goto();
+        await navigateToPage(loginPage);
     });
 
     await allure.step("Login with valid credentials", async () => {
@@ -23,7 +23,7 @@ test.beforeEach( async({loginPage, homePage, cartPage}) => {
 
     // Go to the home page
     await allure.step("Go to Home Page", async () => {
-        await homePage.goto();
+        await navigateToPage(homePage);
     });
     
     // Get product's full info
@@ -38,8 +38,8 @@ test.beforeEach( async({loginPage, homePage, cartPage}) => {
 
     // Go to the cart page
     await allure.step("Go to cart", async () => {
-        await cartPage.goto();
-        await cartPage.checkoutButton.isVisible();
+        await navigateToPage(cartPage);
+        expect(await cartPage.isCheckoutButtonVisible()).toBe(true);
     });
 });
 
@@ -50,7 +50,7 @@ test('SCE5: Checkout succeeds with valid receiver info (COD)', async ({cartPage,
         await cartPage.clickCheckoutButton();
     });
     await allure.step("Verify 'Đặt hàng ngay' button is displayed", async () => {
-        expect(checkoutPage.checkoutSubmitButton).toBeVisible();
+        expect(await checkoutPage.isCheckoutSubmitButtonVisible()).toBe(true);
     });
 
     await allure.step("Fill Receiver's Information", async () => {
@@ -65,7 +65,7 @@ test('SCE5: Checkout succeeds with valid receiver info (COD)', async ({cartPage,
     
     //Assertion
     await allure.step("Verify Success booking result is displayed", async () => {
-        expect(checkoutPage.checkoutSuccess).toBeVisible();
+        expect(await checkoutPage.isCheckoutSuccessVisible()).toBe(true);
     });
 
     await allure.step("Verify confirmed booking details", async () => {

@@ -1,23 +1,20 @@
-import { Page,Locator } from '@playwright/test';
-import { baseUrl } from '../env/url';
-import { productName, productPrice } from '../env/locator';
+import type { Page } from '@playwright/test';
 import { longWaitingTime, shortWaitingTime } from '../env/base';
 import * as allure from 'allure-js-commons';
+import { BasePage, type NavigablePage } from './base-page';
 
 export interface ProductData {
     name: string;
     price: string;
 };
 
-export class HomePage {
-    readonly page: Page;
-    
-    constructor(page:Page) {
-        this.page = page;
+export class HomePage extends BasePage implements NavigablePage {
+    constructor(page: Page) {
+        super(page);
     }
 
-    async goto() {
-        await this.page.goto(baseUrl + '/home');
+    async goto(): Promise<void> {
+        await this.navigateTo('/home');
     }
 
     async addProductToCart(productName: string) {
@@ -49,7 +46,6 @@ export class HomePage {
     }
 
     async addAllProductToCart(products: string[]) {
-        const productInfos: ProductData[] = [];
         for (let i = 0; i < products.length; i++) {
             await this.addProductToCart(products[i]);
             await this.page.waitForTimeout(longWaitingTime);

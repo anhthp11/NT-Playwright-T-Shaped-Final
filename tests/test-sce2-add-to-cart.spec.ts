@@ -4,12 +4,13 @@ import { users } from '../test_data/user-data';
 import { CartItemData } from '@page_objects/cart-page';
 import { ProductData } from '@page_objects/home-page';
 import { CurrencyUtils } from '@core/utils/currency-utils';
+import { navigateToPage } from '../page_objects/base-page';
 import * as allure from 'allure-js-commons';
 
 test.beforeEach(async ({ loginPage }) => {
     // Go to the login page and perform login with valid credentials
     await allure.step('Go to Login Page', async () => {
-        await loginPage.goto();
+        await navigateToPage(loginPage);
     });
 
     await allure.step("Login with valid credentials", async () => {
@@ -30,7 +31,7 @@ test('SCE2: Add item to cart and verify cart contents', async ({ homePage, cartP
     let sumTotal: number = 0;
 
     await allure.step("Go to Home Page", async () => {
-        await homePage.goto();
+        await navigateToPage(homePage);
     });  
 
     // Get product's full info
@@ -45,7 +46,7 @@ test('SCE2: Add item to cart and verify cart contents', async ({ homePage, cartP
 
     // Go to the cart page and verify the item is present in the cart
     await allure.step("Go to cart", async () => {
-        await cartPage.goto();
+        await navigateToPage(cartPage);
     });
 
     // Assertion

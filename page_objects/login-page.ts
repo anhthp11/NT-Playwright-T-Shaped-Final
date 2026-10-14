@@ -1,7 +1,7 @@
-import { Page,Locator } from '@playwright/test';
-import { baseUrl } from '../env/url';
+import { Locator, type Page } from '@playwright/test';
 import { shortWaitingTime } from '../env/base';
 import * as allure from 'allure-js-commons';
+import { BasePage, type NavigablePage } from './base-page';
 
 export interface UserData {
     username: string;
@@ -10,21 +10,20 @@ export interface UserData {
     token?: string;
 };
 
-export class LoginPage {
-    readonly page: Page;
-    readonly usernameInput: Locator;
-    readonly passwordInput: Locator;
-    readonly loginButton: Locator;
+export class LoginPage extends BasePage implements NavigablePage {
+    private readonly usernameInput: Locator;
+    private readonly passwordInput: Locator;
+    private readonly loginButton: Locator;
 
-    constructor(page:Page) {
-        this.page = page;
+    constructor(page: Page) {
+        super(page);
         this.usernameInput = page.getByTestId('login-username');
         this.passwordInput = page.getByTestId('login-password');
         this.loginButton = page.getByTestId('login-submit');
     }
 
-    async goto() {
-            await this.page.goto(baseUrl + '/login');
+    async goto(): Promise<void> {
+        await this.navigateTo('/login');
     }
 
     async login(user: UserData) {
@@ -40,5 +39,9 @@ export class LoginPage {
             await this.loginButton.click();
         });
             await this.page.waitForTimeout(shortWaitingTime);
+    }
+
+    async getHeaderUsername(): Promise<string | null> {
+        return this.page.getByTestId('header-username').textContent();
     }
 }

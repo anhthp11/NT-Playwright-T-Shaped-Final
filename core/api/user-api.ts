@@ -1,10 +1,17 @@
 import * as api from '../../env/endpoint';
 import * as allure from 'allure-js-commons';
+import type { APIRequestContext } from '@playwright/test';
+
+export interface UserProfile {
+    name: string;
+}
 
 export class UserAPI {
-    static async getProfile(request: any, token: string) {
+    constructor(private readonly request: APIRequestContext) {}
+
+    async getProfile(token: string): Promise<UserProfile> {
         const profile = await allure.step('Get user information by API', async () => {
-            const response = await request.get(api.userAPI, {
+            const response = await this.request.get(api.userAPI, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -14,9 +21,9 @@ export class UserAPI {
         return profile;
     }
 
-    static async updateFullName(request: any, token: string, name: string) {
+    async updateFullName(token: string, name: string): Promise<UserProfile> {
         const updateFullNameResult = await allure.step('Update full name by API', async () => {
-            const response = await request.patch(api.userAPI, {
+            const response = await this.request.patch(api.userAPI, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },

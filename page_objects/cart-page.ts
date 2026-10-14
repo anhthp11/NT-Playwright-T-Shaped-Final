@@ -1,9 +1,8 @@
-import { Page,Locator } from '@playwright/test';
-import { baseUrl } from '../env/url';
+import { Locator, Page } from '@playwright/test';
 import * as locator from '../env/locator';
 import { ProductData } from './home-page';
 import { shortWaitingTime } from '../env/base';
-import * as allure from 'allure-js-commons';
+import { BasePage, type NavigablePage } from './base-page';
 
 export interface CartItemData extends ProductData {
     //category: string;
@@ -11,19 +10,22 @@ export interface CartItemData extends ProductData {
     unitTotal: string;
 };
 
-export class CartPage {
-    readonly page: Page;
-    readonly checkoutButton: Locator;
-    readonly cartTotal: Locator;
+export class CartPage extends BasePage implements NavigablePage {
+    private readonly checkoutButton: Locator;
+    private readonly cartTotal: Locator;
 
-    constructor(page:Page) {
-        this.page = page;
+    constructor(page: Page) {
+        super(page);
         this.checkoutButton = page.locator(locator.checkoutButton);
         this.cartTotal = page.locator(locator.cartTotal);
     }
 
-    async goto() {
-        await this.page.goto(baseUrl + '/cart');
+    async goto(): Promise<void> {
+        await this.navigateTo('/cart');
+    }
+
+    async isCheckoutButtonVisible(): Promise<boolean> {
+        return this.checkoutButton.isVisible();
     }
 
     async clickCheckoutButton() {

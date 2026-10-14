@@ -2,6 +2,7 @@ import { Page,Locator } from '@playwright/test';
 import * as locator from '../env/locator';
 import { shortWaitingTime } from '../env/base';
 import * as allure from 'allure-js-commons';
+import { BasePage } from './base-page';
 
 export interface ReceiverInfo {
     fullname: string,
@@ -14,21 +15,20 @@ export interface ConfirmedBooking extends ReceiverInfo {
     total: string,
 };
 
-export class CheckoutPage {
-    readonly page: Page;
-    readonly checkoutName: Locator;
-    readonly checkoutPhone: Locator;
-    readonly checkoutAddress: Locator;
-    readonly checkoutSubmitButton: Locator;
-    readonly checkoutSuccess: Locator;
-    readonly confirmedBookingCode: Locator;
-    readonly confirmedReceiverName: Locator;
-    readonly confirmedReceiverAddress: Locator;
-    readonly confirmedPaymentMethod: Locator;
-    readonly confirmedTotal: Locator;
+export class CheckoutPage extends BasePage {
+    private readonly checkoutName: Locator;
+    private readonly checkoutPhone: Locator;
+    private readonly checkoutAddress: Locator;
+    private readonly checkoutSubmitButton: Locator;
+    private readonly checkoutSuccess: Locator;
+    private readonly confirmedBookingCode: Locator;
+    private readonly confirmedReceiverName: Locator;
+    private readonly confirmedReceiverAddress: Locator;
+    private readonly confirmedPaymentMethod: Locator;
+    private readonly confirmedTotal: Locator;
 
-    constructor(page:Page) {
-        this.page = page;
+    constructor(page: Page) {
+        super(page);
         this.checkoutSubmitButton = page.getByTestId('checkout-submit');
         this.checkoutName = page.getByTestId('checkout-name');
         this.checkoutPhone = page.getByTestId('checkout-phone');
@@ -39,6 +39,14 @@ export class CheckoutPage {
         this.confirmedReceiverAddress = page.locator(locator.confirmedReceiverAddress);
         this.confirmedPaymentMethod = page.locator(locator.confirmedPaymentMethod);
         this.confirmedTotal = page.locator(locator.confirmedTotal);
+    }
+
+    async isCheckoutSubmitButtonVisible(): Promise<boolean> {
+        return this.checkoutSubmitButton.isVisible();
+    }
+
+    async isCheckoutSuccessVisible(): Promise<boolean> {
+        return this.checkoutSuccess.isVisible();
     }
 
     async checkoutSubmit() {
