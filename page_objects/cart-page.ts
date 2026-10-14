@@ -1,5 +1,4 @@
 import { Locator, Page } from '@playwright/test';
-import * as locator from '../env/locator';
 import { ProductData } from './home-page';
 import { shortWaitingTime } from '../env/base';
 import { BasePage, type NavigablePage } from './base-page';
@@ -11,13 +10,15 @@ export interface CartItemData extends ProductData {
 };
 
 export class CartPage extends BasePage implements NavigablePage {
+    private readonly cartItems: Locator;
     private readonly checkoutButton: Locator;
     private readonly cartTotal: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.checkoutButton = page.locator(locator.checkoutButton);
-        this.cartTotal = page.locator(locator.cartTotal);
+        this.cartItems = page.locator('xpath=.//div[@class="cart-item"]');
+        this.checkoutButton = page.locator('//button[@class="checkout-btn"]');
+        this.cartTotal = page.locator('xpath=.//div[@class="summary-total"]/span[contains(text(),"đ")]');
     }
 
     async goto(): Promise<void> {
@@ -35,18 +36,16 @@ export class CartPage extends BasePage implements NavigablePage {
 
     async getCartItems(): Promise<CartItemData[]> {
         const items: CartItemData[] = [];
-        const cartItems = this.page.locator(locator.cartItem);
-        const count = await cartItems.count();
+        const count = await this.cartItems.count();
 
         for (let i = 0; i < count; i++) {
-            const item = cartItems.nth(i);
+            const item = this.cartItems.nth(i);
             
             items.push({
-                name: await item.locator(locator.cartItemName).innerText(),
-                price: await item.locator(locator.cartItemPrice).innerText(),
-                quantity: await item.locator(locator.cartItemQuantity).innerText(),
-                //category: await item.locator(locator.cartItemCategory).innerText(),
-                unitTotal: await item.locator(locator.cartItemTotalPrice).innerText()
+                name: await item.locator('xpath=.//*[@class="item-name"]').innerText(),
+                price: await item.locator('xpath=.//*[@class="item-unit-price"]').innerText(),
+                quantity: await item.locator('xpath=.//div[@class="item-qty"]/span').innerText(),
+                unitTotal: await item.locator('xpath=.//div[@class="item-total"]').innerText()
             });
         }
 
@@ -58,12 +57,10 @@ export class CartPage extends BasePage implements NavigablePage {
     }
 
     async deleteAllCartItems() {
-        const cartItems = this.page.locator(locator.cartItem);
-
-        while (await cartItems.count() > 0) {       
-            await cartItems
+        while (await this.cartItems.count() > 0) {
+            await this.cartItems
                 .first()
-                .locator(locator.cartItemRemoveButton)
+                .locator('xpath=.//button[@class="remove-btn"]')
                 .click();  
             await this.page.waitForTimeout(shortWaitingTime);
         }

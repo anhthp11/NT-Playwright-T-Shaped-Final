@@ -1,5 +1,4 @@
-import { Page,Locator } from '@playwright/test';
-import * as locator from '../env/locator';
+import { Locator, Page } from '@playwright/test';
 import { shortWaitingTime } from '../env/base';
 import * as allure from 'allure-js-commons';
 import { BasePage } from './base-page';
@@ -34,11 +33,11 @@ export class CheckoutPage extends BasePage {
         this.checkoutPhone = page.getByTestId('checkout-phone');
         this.checkoutAddress = page.getByTestId('checkout-address');
         this.checkoutSuccess = page.getByTestId('checkout-success-heading');
-        this.confirmedBookingCode = page.locator(locator.confirmedฺBookingCode);
-        this.confirmedReceiverName = page.locator(locator.confirmedReceiverName);
-        this.confirmedReceiverAddress = page.locator(locator.confirmedReceiverAddress);
-        this.confirmedPaymentMethod = page.locator(locator.confirmedPaymentMethod);
-        this.confirmedTotal = page.locator(locator.confirmedTotal);
+        this.confirmedBookingCode = page.locator('xpath=.//div[@class="checkout-success"]/p[contains(text(),"Mã đơn hàng")]/strong');
+        this.confirmedReceiverName = page.locator('xpath=.//div[@class="checkout-success"]/p[contains(text(),"Người nhận")]/strong');
+        this.confirmedReceiverAddress = page.locator('xpath=.//div[@class="checkout-success"]/p[not(*) and not(@class)]');
+        this.confirmedPaymentMethod = page.locator('xpath=//div[@class="checkout-success"]/p/strong[contains(text(),"Tiền") or contains(text(),"Thẻ")]');
+        this.confirmedTotal = page.locator('xpath=.//div[@class="checkout-success"]/p[@class="success-total"]');
     }
 
     async isCheckoutSubmitButtonVisible(): Promise<boolean> {

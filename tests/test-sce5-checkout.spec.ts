@@ -2,51 +2,41 @@ import { test, expect } from '../core/fixtures/page-fixture';
 import { receivers, users } from '../test_data/user-data';
 import { ProductData } from '@page_objects/home-page';
 import { products } from '../test_data/product-data';
-import { ConfirmedBooking, ReceiverInfo } from '@page_objects/checkout-page';
+import { CartItemData } from '@page_objects/cart-page';
+import { ConfirmedBooking } from '@page_objects/checkout-page';
 import { paymentMethods } from '../test_data/payment-data';
 import { navigateToPage } from '../page_objects/base-page';
+import { CurrencyUtils } from '@core/utils/currency-utils';
 import * as allure from 'allure-js-commons';
 
-test.beforeEach( async({loginPage, homePage, cartPage}) => {
-    //Variables
-    let productInfos: ProductData[] = [];
+test('SCE5: Checkout succeeds with valid receiver info (COD)', async ({ loginPage, homePage, cartPage, checkoutPage }) => {
+    await navigateToPage(loginPage);
+    await loginPage.login(users[0]);
 
-    // Go to the login page and perform login with valid credentials
-    await allure.step('Go to Login Page', async () => {
-        await navigateToPage(loginPage);
+    await navigateToPage(homePage);
+    const productInfos: ProductData[] = await homePage.getAllProductsInfo(products);
+    await homePage.addAllProductToCart(products);
+
+    await navigateToPage(cartPage);
+    expect(await cartPage.isCheckoutButtonVisible()).toBe(true);
+
+    await allure.step('Verify products before checkout', async () => {
+        const cartItems: CartItemData[] = await cartPage.getCartItems();
+        expect(cartItems).toHaveLength(productInfos.length);
+        expect(cartItems.map((item) => item.name)).toEqual(productInfos.map((product) => product.name));
+
+        for (let index = 0; index < cartItems.length; index++) {
+            expect(cartItems[index].name).toBe(products[index]);
+            expect(CurrencyUtils.parseCurrency(cartItems[index].price))
+                .toEqual(CurrencyUtils.parseCurrency(productInfos[index].price));
+            expect(Number(cartItems[index].quantity)).toBe(1);
+            expect(CurrencyUtils.parseCurrency(cartItems[index].unitTotal))
+                .toEqual(CurrencyUtils.parseCurrency(productInfos[index].price));
+        }
     });
 
-    await allure.step("Login with valid credentials", async () => {
-        await loginPage.login(users[0]);
-    });
-
-
-    // Go to the home page
-    await allure.step("Go to Home Page", async () => {
-        await navigateToPage(homePage);
-    });
-    
-    // Get product's full info
-    await allure.step("Get All Product's Details", async () => {
-        productInfos = await homePage.getAllProductsInfo(products);
-    });
-    
-    // Add all products to cart
-    await allure.step("Get All Product's Details", async () => {
-        await homePage.addAllProductToCart(products);
-    });
-
-    // Go to the cart page
-    await allure.step("Go to cart", async () => {
-        await navigateToPage(cartPage);
-        expect(await cartPage.isCheckoutButtonVisible()).toBe(true);
-    });
-});
-
-test('SCE5: Checkout succeeds with valid receiver info (COD)', async ({cartPage, checkoutPage}) => {
     const cartTotal = await cartPage.getCartTotal();
-    //console.log(cartTotal);
-    await allure.step("Click on Checkout Button", async () => {
+    await allure.step('Click on Checkout Button', async () => {
         await cartPage.clickCheckoutButton();
     });
     await allure.step("Verify 'Đặt hàng ngay' button is displayed", async () => {
@@ -56,26 +46,23 @@ test('SCE5: Checkout succeeds with valid receiver info (COD)', async ({cartPage,
     await allure.step("Fill Receiver's Information", async () => {
         await checkoutPage.fillReceiverInfo(receivers[0]);
     });
-    await allure.step("Select Payment Method", async () => {
+    await allure.step('Select Payment Method', async () => {
         await checkoutPage.selectPaymentMethod(paymentMethods[0].code);
     });
     await allure.step("Click on 'Đặt hàng ngay' button", async () => {
         await checkoutPage.checkoutSubmit();
     });
-    
-    //Assertion
-    await allure.step("Verify Success booking result is displayed", async () => {
+
+    await allure.step('Verify Success booking result is displayed', async () => {
         expect(await checkoutPage.isCheckoutSuccessVisible()).toBe(true);
     });
 
-    await allure.step("Verify confirmed booking details", async () => {
-        const confirmedInfo:ConfirmedBooking = await checkoutPage.getConfirmedBookingInformation(); // Get confirmed booking information
-        //console.log(confirmedInfo);
-        
+    await allure.step('Verify confirmed booking details', async () => {
+        const confirmedInfo: ConfirmedBooking = await checkoutPage.getConfirmedBookingInformation();
         expect(confirmedInfo).toMatchObject({
             fullname: receivers[0].fullname,
             address: receivers[0].address,
-            total:  cartTotal,
+            total: cartTotal,
             paymentMethod: expect.stringContaining(paymentMethods[0].confirmedName),
         });
         expect(confirmedInfo.bookingCode).toBeTruthy();

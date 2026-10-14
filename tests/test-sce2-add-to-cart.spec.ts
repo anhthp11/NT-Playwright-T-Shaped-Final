@@ -53,20 +53,27 @@ test('SCE2: Add item to cart and verify cart contents', async ({ homePage, cartP
     await allure.step("Verify data in the cart", async () => {
         const cartItems:CartItemData[] = await cartPage.getCartItems();
         await allure.step("Verify total numbers of products in the cart", async () => {
-            expect(productInfos.length).toBe(cartItems.length);
+            expect(cartItems).toHaveLength(productInfos.length);
+            expect(cartItems.map((item) => item.name)).toEqual(productInfos.map((product) => product.name));
         });
 
         for (let i = 0; i < cartItems.length; i++) {
             await allure.step("Verify product's name", async () => {
+                expect(cartItems[i].name).toBe(products[i]);
                 expect(cartItems[i].name).toBe(productInfos[i].name);
             });
             await allure.step("Verify product's price", async () => {
-                expect(cartItems[i].price).toContain(productInfos[i].price);
+                expect(CurrencyUtils.parseCurrency(cartItems[i].price))
+                    .toEqual(CurrencyUtils.parseCurrency(productInfos[i].price));
             });
             
             const price = CurrencyUtils.parseCurrency(productInfos[i].price);
             const unitTotal = CurrencyUtils.parseCurrency(cartItems[i].unitTotal);
-            const multiplyResults =  price * Number(cartItems[i].quantity);
+            const quantity = Number(cartItems[i].quantity);
+            const multiplyResults = price * quantity;
+            await allure.step("Verify product quantity", async () => {
+                expect(quantity).toBe(1);
+            });
             await allure.step("Verify unit Total price of the products", async () => {
                expect(unitTotal).toEqual(multiplyResults);
             });
